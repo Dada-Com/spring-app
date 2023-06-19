@@ -1,4 +1,8 @@
-FROM eclipse-temurin:17-jdk-alpine
-COPY target/*.jar My-portfolio-0.0.1-SNAPSHOT.jar
-ENTRYPOINT ["java" "-jar" "/My-portfolio-0.0.1-SNAPSHOT.jar"]
+FROM maven:3.8.5-openjdk-17 AS build
+COPY . .
+RUN mvn clean package -DskipTests
+
+FROM openjdk:17.0.1-jdk-slim
+COPY --from=build /target/*  My-portfolio-0.0.1-SNAPSHOT.jar
 EXPOSE 8082
+ENTRYPOINT ["java","-jar"," My-portfolio-0.0.1-SNAPSHOT.jar"]
